@@ -1,62 +1,73 @@
 [
     {
-        "title": "Lorem ipsum dolor sit.",
+        "title": "Power Outages Analysis",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsum molestiae consectetur quo quia doloribus aliquid quod a quam voluptatum tenetur natus alias, nostrum necessitatibus unde consequuntur facilis neque temporibus! Quisquam?"
+        "description": "For the DSC 80 final project. EDA, hypothesis/ permutation testing, data visualizations, and machine learning. "
     },
     {
-        "title": "Voluptate optio voluptatum id?",
+        "title": "Weather Image Classification",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Maxime laboriosam blanditiis atque accusamus doloribus sunt autem deserunt incidunt inventore, quae debitis quia in molestias omnis, illum dolore dolorem tenetur fugiat nam dolores? Modi, id. Accusantium fugiat debitis laboriosam."
+        "description": "Built a CNN using tensorflow (keras)"
     },
     {
-        "title": "Sint repudiandae maiores ipsum?",
+        "title": "Sleep data analysis",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Optio voluptatibus architecto debitis tenetur voluptatum cumque itaque cum doloremque ea facere? Nihil sapiente vel excepturi? Omnis dolore suscipit, commodi doloremque porro odit cumque, necessitatibus voluptatum dicta quas temporibus ipsam?"
+        "description": "Exploratory data analysis on my own sleep data from 2023"
     },
     {
-        "title": "Facilis quia consectetur repellendus!",
+        "title": "Titanic survival prediction",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Minus ipsum eius quia nobis assumenda tenetur a libero nostrum distinctio excepturi asperiores nisi pariatur obcaecati architecto totam odio expedita corrupti odit, cupiditate facilis sunt at praesentium. Est, autem iste."
+        "description": "For a kaggle competition"
     },
     {
-        "title": "Pariatur natus dolores veritatis?",
+        "title": "Bioinformatics work",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Nobis ipsa dolorum, modi et, laboriosam impedit, quo dolorem eum ipsum beatae quas? At unde fuga repellat nisi, dicta eos dolore sit voluptatibus ipsum. Nobis, illo! Quas similique iusto eveniet."
+        "description": "For a UCSD coursera course on finding motifs in DNA"
     },
     {
-        "title": "Sequi nemo quod accusantium.",
+        "title": "Connect 4",
+        "year": "2021",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Officiis nam eos quam cumque illo distinctio nemo accusamus nobis natus? Quam sit cumque quod, voluptatibus odio earum ad nam deleniti recusandae non, esse quis, vero doloribus obcaecati debitis iure!"
+        "description": "My APCS A Final project in 2021"
     },
     {
-        "title": "Repellendus consectetur suscipit facere.",
+        "title": "Portfolio",
+        "year": "2025",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Earum dicta assumenda similique necessitatibus illo distinctio nesciunt asperiores neque quo adipisci. Nam dicta itaque unde necessitatibus illum! Similique praesentium voluptates dolore tenetur nostrum doloribus assumenda est aliquam, fugiat quis."
+        "description": "This website"
     },
     {
-        "title": "Corrupti quidem illo magni.",
+        "title": "Digit classication",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Doloribus accusamus ullam natus vero ad possimus molestias unde nemo minus nostrum rem labore quam quos obcaecati culpa earum saepe voluptatibus qui placeat, voluptatum, neque, architecto porro. Voluptas, voluptatum aliquam!"
+        "description": "Homework for DSC 30: implemented an array backed priority queue that used euclidean distance between images to evaluate order"
     },
     {
-        "title": "Porro culpa obcaecati doloremque!",
+        "title": "Project 9",
+        "year": "n/a",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Nobis non similique dolor, labore aliquam corporis quo unde aspernatur sequi. Porro ipsam repudiandae aliquam molestias provident sunt, nisi consequuntur delectus mollitia adipisci odio cum doloremque quasi est illo quisquam!"
+        "description": "n/a"
     },
     {
-        "title": "Est commodi sunt tempore.",
+        "title": "Project 10",
+        "year": "n/a",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Nihil qui, officiis quos voluptatem facere, culpa earum ab possimus tempora iusto mollitia! Aut quos dolores, molestiae dolore magni ratione sed! Dignissimos ad minus iste dolorum enim cum similique sapiente."
+        "description": "n/a"
     },
     {
-        "title": "Vero eveniet doloribus nostrum.",
+        "title": "Project 11",
+        "year": "n/a",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Ut, officiis? Laudantium dolore architecto suscipit optio accusamus harum esse. Labore qui vero eveniet consequuntur accusamus provident consectetur! Incidunt eum ipsam odit repellendus modi nesciunt reprehenderit ea itaque molestiae dolorem?"
+        "description": "n/a"
     },
     {
-        "title": "Amet eos vero maiores.",
+        "title": "Project 12",
+        "year": "n/a",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Est, cupiditate ipsa numquam aliquid repudiandae et tenetur quod inventore iusto hic laudantium velit explicabo? Odit, perferendis non facilis enim commodi soluta mollitia distinctio veniam tenetur, earum eum omnis similique!"
+        "description": "n/a"
     }
 ]
