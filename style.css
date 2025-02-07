@@ -99,3 +99,10 @@ section h3 {
 article h1 {
   color: hsl(266, 49%, 60%);
 }
+
+#projects-plot {
+  max-width: 20em;
+  margin-block: 2em;
+
+  overflow: visible;
+}
