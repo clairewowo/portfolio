@@ -120,11 +120,7 @@ article h1 {
   flex: 1;
   border:2px solid black;
   grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
-  .selected-legend {
-    font-weight: bold;
-    color: #333;
-    text-decoration: underline;
-  }
+  
 }
 
 .item {

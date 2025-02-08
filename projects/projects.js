@@ -35,6 +35,13 @@ function renderPieChart(projectsGiven) {
   //newSVG.selectAll('path').remove();
   d3.select('.legend').selectAll('li').remove();
   let legend = d3.select('.legend');
+  newData.forEach((d, idx) => {
+    legend.append('li')
+      .attr('class', 'item')
+      .attr('style', `--color:${colors(idx)}`)
+      .html(`<span class="swatch"></span> ${d.label} <em>(${d.value})</em>`);
+  });
+  
   // update paths and legends, refer to steps 1.4 and 2.2
   newArcs.forEach((one_arc, i) => {
     svg
@@ -57,12 +64,13 @@ function renderPieChart(projectsGiven) {
 
         if (selectedIndex === -1) {
           renderProjects(projects, projectsContainer, 'h2');
+          renderPieChart(projects);
         } else {
-        
         const selectedLabel = newData[selectedIndex].label; // Get the label from newData
         console.log(selectedLabel);
         const selectedProjects = projects.filter(project => project.year === selectedLabel);
         renderProjects(selectedProjects, projectsContainer, 'h2');
+        renderPieChart(selectedProjects);
         }
       });
   });
