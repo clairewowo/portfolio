@@ -43,30 +43,31 @@
     },
     {
         "title": "Digit classication",
+        "year": "2027",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Homework for DSC 30: implemented an array backed priority queue that used euclidean distance between images to evaluate order"
     },
     {
         "title": "Project 9",
-        "year": "n/a",
+        "year": "2023",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "n/a"
     },
     {
         "title": "Project 10",
-        "year": "n/a",
+        "year": "2025",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "n/a"
     },
     {
         "title": "Project 11",
-        "year": "n/a",
+        "year": "2020",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "n/a"
     },
     {
         "title": "Project 12",
-        "year": "n/a",
+        "year": "2022",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "n/a"
     }

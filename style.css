@@ -6,24 +6,25 @@ body {
     /* Set line height to 1.5 times the font size
          and use the OS’s UI font as the website font
        */
-    font: 100%/1.5 system-ui;
-    max-width:100ch; 
-    margin-left: auto;
-    margin-right: auto;
-    margin-inline: auto;
-    margin-bottom: 50px;
-    padding: 20px
-  }
+  font: 100%/1.5 system-ui;
+  max-width:100ch; 
+  margin-left: auto;
+  margin-right: auto;
+  margin-inline: auto;
+  margin-bottom: 50px;
+  padding: 20px
+}
 :root {
-    --color-accent: oklch(80% 20% 290)
+  --color-accent: oklch(80% 20% 290);
+  --color: oklch(85% 0.1 230);
 }
 
 ul {
-  display:contents
+  display: contents;
 }
 li {
-    display:contents
-}
+  display: contents;
+} 
 
 .color-scheme {
   position: absolute;
@@ -100,9 +101,60 @@ article h1 {
   color: hsl(266, 49%, 60%);
 }
 
-#projects-plot {
+#projects-pie-plot {
   max-width: 20em;
   margin-block: 2em;
-
   overflow: visible;
+}
+
+.swatch {
+  width: 15px;
+  border-radius: 50%;
+  height: 15px;
+  background-color: var(--color);
+  display: inline-block;
+}
+
+.legend { 
+  display:grid;
+  flex: 1;
+  border:2px solid black;
+  grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
+  .selected-legend {
+    font-weight: bold;
+    color: #333;
+    text-decoration: underline;
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center; /* Align text and circle vertically */
+  gap: 4px; /* Reduced spacing between circle and label */
+
+  
+}
+
+.item::before  {
+  width: 10px; 
+  height: 10px;
+  border-radius: 50%;
+}
+
+&:has(path:hover) {
+  path:not(:hover) {
+    opacity: 0.5;
+  }
+}
+
+path {
+  transition: 300ms;
+}
+
+.selected {
+  --color: oklch(60% 45% 0) !important;
+
+  &:is(path) {
+    fill: var(--color);
+  }
 }
