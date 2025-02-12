@@ -104,7 +104,11 @@ export async function fetchJSON(url) {
   }
 };
 
-export function renderProjects(project, containerElement, headingLevel='h2') {
+export function renderProjects(project, containerElement, headingLevel='h2', display_num=true) {
+  if (display_num) {
+    const header = document.querySelector('.projects-title');
+    header.innerHTML = `<h1>${project.length} Projects</h1>`
+  }
   containerElement.innerHTML = '';
   for (let p of project) {
     const article = document.createElement('article');
