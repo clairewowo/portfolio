@@ -154,3 +154,63 @@ path {
     fill: var(--color);
   }
 }
+
+.gridlines {
+  stroke-width: 0.5px;
+}
+
+circle {
+  transition: 200ms;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+circle:hover {
+  transform: scale(1.5);
+}
+
+dl.info {
+  display: grid;
+  grid-template-columns: auto 1fr; /* dt in the first column, dd in the second */
+  gap: 8px 16px; /* Adds spacing between elements */
+  align-items: start;
+}
+
+.tooltip {
+  position:fixed;
+  background-color:darkgray;
+  box-shadow:2px;
+  border-radius: 2px;
+  backdrop-filter: blur(10px) brightness(80%);
+  padding: 4px;
+}
+
+dl.info {
+  /* ... other styles ... */
+  transition-duration: 500ms;
+  transition-property: opacity, visibility;
+}
+
+dl.info[hidden]:not(:hover, :focus-within) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+@keyframes marching-ants {
+  to {
+    stroke-dashoffset: -8; /* 5 + 3 */
+  }
+}
+
+.selection {
+  fill-opacity: 0.1;
+  stroke: black;
+  stroke-opacity: 0.7;
+  stroke-dasharray: 5 3;
+  animation: marching-ants 2s linear infinite;
+}
+
+circle.selected {
+  fill: #ff6b6b;
+}
+
