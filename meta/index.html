@@ -40,6 +40,14 @@
     
 
     <h2>Commits by time of day</h2>
+    <div  class="time-slider">
+        <label>Show commits until: 
+            <input id="timeBar" type=range min="0" max="100"></input>
+            <time id="selectedTime"></time>
+        </label>
+    </div>
+    
+    
     <div id="chart"></div>
     <p id="selection-count">No commits selected</p>
     <dl id="language-breakdown" class="stats"></dl>

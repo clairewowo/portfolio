@@ -214,3 +214,11 @@ circle.selected {
   fill: #ff6b6b;
 }
 
+.time-slider {
+  flex: 1;
+  align-items: baseline;
+}
+
+#selectedTime {
+  margin-left: auto;
+}

@@ -1,5 +1,7 @@
 let data = [];
 let commits = [];
+let commitProgress = 100;
+
 
 function processCommits() {
   commits = d3
@@ -117,9 +119,10 @@ async function loadData() {
     date: new Date(row.date + 'T00:00' + row.timezone),
     datetime: new Date(row.datetime),
   }));
-
+  
   commits = d3.groups(data, (d) => d.commit);
-  displayStats();
+
+  
 }
 
 
@@ -133,35 +136,37 @@ let xScale = d3
   .nice();
 
 let brushSelection = null;
+let selectedCommits =[];
 function isCommitSelected(commit) {
-  if (!brushSelection) {
-    return false;
-  }
+ /*
   const min = { x: brushSelection[0][0], y: brushSelection[0][1] }; 
   const max = { x: brushSelection[1][0], y: brushSelection[1][1] }; 
 
   const x = xScale(commit.date); 
   const y = yScale(commit.hourFrac); 
-  return x >= min.x && x <= max.x && y >= min.y && y <= max.y; 
+  return x >= min.x && x <= max.x && y >= min.y && y <= max.y; */
+  return selectedCommits.includes(commit);
 }
 
 function updateSelectionCount() {
-  const selectedCommits = brushSelection
+  /*
+  selectedCommits = brushSelection
     ? commits.filter(isCommitSelected)
-    : [];
+    : [];  */
 
   const countElement = document.getElementById('selection-count');
   countElement.textContent = `${
     selectedCommits.length || 'No'
   } commits selected`;
 
-  return selectedCommits;
+  //return selectedCommits;
 }
 
 function updateLanguageBreakdown() {
-  const selectedCommits = brushSelection
+  /*
+  selectedCommits = brushSelection
     ? commits.filter(isCommitSelected)
-    : [];
+    : []; */
   const container = document.getElementById('language-breakdown');
 
   if (selectedCommits.length === 0) {
@@ -197,8 +202,21 @@ function updateSelection() {
   // Update visual state of dots based on selection
   d3.selectAll('circle').classed('selected', (d) => isCommitSelected(d));
 }
-function brushed(event) {
-  brushSelection = event.selection;
+
+function brushed(evt) {
+  brushSelection = evt.selection;
+  selectedCommits = !brushSelection
+    ? []
+    : commits.filter((commit) => {
+        let min = { x: brushSelection[0][0], y: brushSelection[0][1] };
+        let max = { x: brushSelection[1][0], y: brushSelection[1][1] };
+        let x = xScale(commit.date);
+        let y = yScale(commit.hourFrac);
+
+        return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+      });
+  
+  // this was included before
   updateSelection();
   updateSelectionCount();
   updateLanguageBreakdown();
@@ -305,13 +323,16 @@ function createScatterplot() {
     .style('fill-opacity', 0.7) // Add transparency for overlapping dots
     .on('mouseenter', (event, commit) => {
       d3.select(event.currentTarget).style('fill-opacity', 1);
+      
+      d3.select(event.currentTarget).classed('selected', true); // give it a corresponding boolean value
       updateTooltipContent(commit);
       updateTooltipVisibility(true);
       updateTooltipPosition(event);
     })
-    .on('mouseleave', () => {
+    .on('mouseleave', (event, commit) => {
       updateTooltipContent({});
       d3.select(event.currentTarget).style('fill-opacity', 0.7);
+      d3.select(event.currentTarget).classed('selected', false);
       updateTooltipVisibility(false);
     });
   console.log('created dots');
@@ -332,12 +353,27 @@ function createScatterplot() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadData();
+
+  displayStats();
   console.log('data loaded');
   createScatterplot();
+
+  let timeScale = d3.scaleTime([d3.min(commits, d => d.datetime), d3.max(commits, d => d.datetime)], [0, 100]);
+  const timeSlider = d3.select('#timeBar');
+  const selectedTime = d3.select('#selectedTime');
+
+  function updateTime() {
+    let commitProgress = Number(timeSlider.property("value")) || 0;
+    let commitMaxTime = timeScale.invert(commitProgress);
+    selectedTime.text(commitMaxTime.toLocaleString(undefined, { 
+      dateStyle: "long", 
+      timeStyle: "short" 
+    }));
+  }
+  
+  // Attach event listener for slider movement
+  timeSlider.on("input", updateTime);
+  
+  // Initialize with default value
+  updateTime();
 });
-
-
-
-
-
-
