@@ -20,6 +20,15 @@ let currentLink = navLinks.find(
   }
 */
 
+function getBasePath() {
+  const isGitHubPages = location.hostname.includes('github.io');
+  if (isGitHubPages) {
+    const repoName = location.pathname.split('/')[1]; 
+    return `/${repoName}/`;
+  }
+  return '/'; 
+}
+
 let pages = [
   { url: '', title: 'Home' },
   { url: 'projects/index.html', title: 'Projects' },
@@ -32,35 +41,7 @@ let nav = document.createElement('nav');
 document.body.prepend(nav);
 
 const ARE_WE_HOME = document.documentElement.classList.contains('home');
-for (let p of pages) {
-  // let url = p.url;
-  // let title = p.title;
-  
-  // if (!ARE_WE_HOME && !url.startsWith('http')) {
-  //   url = '../' + url;
-  // }
-  // let a = document.createElement('a');
-  // a.href = url;
-  // a.textContent = title;
-  // if (a.host === location.host && a.pathname === location.pathname) {
-  //   a.classList.add('current');
-  // }
-  let a = document.createElement('a');
-  nav.append(a);
-  a.href = url;
-  a.textContent = title;
-  nav.append(a);
-
-  a.classList.toggle(
-    'current',
-    a.host === location.host && 
-    a.pathname === location.pathname
-  );
-
-  if (a.host !== location.host) {
-    a.target = "_blank";
-  }
-}
+const basePath = getBasePath();
 
 for (let p of pages) {
   let url = p.url;
@@ -74,7 +55,20 @@ for (let p of pages) {
     }
   }
 
-  
+  let a = document.createElement('a');
+  a.href = url;
+  a.textContent = title;
+  nav.append(a);
+
+  a.classList.toggle(
+    'current',
+    a.host === location.host && 
+    a.pathname === location.pathname
+  );
+
+  if (a.host !== location.host) {
+    a.target = "_blank";
+  }
 }
 
 document.body.insertAdjacentHTML(
