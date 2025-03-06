@@ -8,6 +8,7 @@ let commitMaxTime = 0;
 let files = [];
 let lines = [];
 
+
 function processCommits() {
   commits = d3
     .groups(data, (d) => d.commit)
@@ -19,7 +20,7 @@ function processCommits() {
 
       let ret = {
         id: commit,
-        url: 'https://github.com/clairewowo/DSC106-lab1/commit/' + commit,
+        url: 'https://github.com/clairewowo/portfolio/commit/' + commit,
         author,
         date,
         time,
@@ -205,7 +206,6 @@ function brushed(evt) {
         return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
       });
   
-  // this was included before
   updateSelection();
   updateSelectionCount();
   updateLanguageBreakdown();
@@ -317,7 +317,6 @@ function updateScatterplot(commits) {
     .style('fill-opacity', 0.7) // Add transparency for overlapping dots
     .on('mouseenter', (event, commit) => {
       d3.select(event.currentTarget).style('fill-opacity', 1);
-      
       d3.select(event.currentTarget).classed('selected', true); // give it a corresponding boolean value
       updateTooltipContent(commit);
       updateTooltipVisibility(true);
@@ -385,9 +384,51 @@ document.addEventListener('DOMContentLoaded', async () => {
   displayStats();
   console.log('data loaded');
   
+  let NUM_ITEMS = commits.length; // Ideally, let this value be the length of your commit history
+  let ITEM_HEIGHT = 80; // Feel free to change
+  let VISIBLE_COUNT = 8; // Feel free to change as well
+  let totalHeight = (NUM_ITEMS - 1) * ITEM_HEIGHT;
+  const scrollContainer = d3.select('#scroll-container');
+  const spacer = d3.select('#spacer');
+  spacer.style('height', `${totalHeight}px`);
+  const itemsContainer = d3.select('#items-container');
+
+  function renderItems(startIndex) {
+    // Clear things off
+    itemsContainer.selectAll('div').remove();
+    const endIndex = Math.min(startIndex + VISIBLE_COUNT, commits.length);
+    let newCommitSlice = commits.slice(startIndex, endIndex);
+    // TODO: how should we update the scatterplot (hint: it's just one function call)
+    updateScatterplot(newCommitSlice);
+
+    newCommitSlice.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+    // Re-bind the commit data to the container and represent each using a div
+    itemsContainer.selectAll('div')
+                  .data(commits)
+                  .enter()
+                  .append('div')
+                  .html((commit, index) => `On ${commit.datetime.toLocaleString("en", {dateStyle: "full", timeStyle:
+  "short"})}, I made
+        <a href="${commit.url}" target="_blank">
+            ${index > 0 ? 'yet another commit' : 'my first commit, and it was glorious'}
+        </a>. I edited ${commit.totalLines} lines across 
+        ${d3.rollups(commit.lines, D => D.length, d => d.file).length} files. 
+        Then I looked over all I had made, and I saw that it was very good.
+    `)
+                  .style('position', 'absolute')
+                  .style('top', (_, idx) => `${idx * ITEM_HEIGHT}px`)
+  }
+  scrollContainer.on('scroll', () => {
+    const scrollTop = scrollContainer.property('scrollTop');
+    let startIndex = Math.floor(scrollTop / ITEM_HEIGHT);
+    startIndex = Math.max(0, Math.min(startIndex, commits.length - VISIBLE_COUNT));
+    renderItems(startIndex);
+  }); 
+
   let timeScale = d3.scaleTime([d3.min(commits, d => d.datetime), d3.max(commits, d => d.datetime)], [0, 100]);
   const timeSlider = d3.select('#timeBar');
   const selectedTime = d3.select('#selectedTime');
+
 
   function updateTime() {
     let commitProgress = Number(timeSlider.property("value")) || 0;

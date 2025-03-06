@@ -33,19 +33,48 @@ document.body.prepend(nav);
 
 const ARE_WE_HOME = document.documentElement.classList.contains('home');
 for (let p of pages) {
-  let url = p.url;
-  let title = p.title;
+  // let url = p.url;
+  // let title = p.title;
   
-  if (!ARE_WE_HOME && !url.startsWith('http')) {
-    url = '../' + url;
-  }
+  // if (!ARE_WE_HOME && !url.startsWith('http')) {
+  //   url = '../' + url;
+  // }
+  // let a = document.createElement('a');
+  // a.href = url;
+  // a.textContent = title;
+  // if (a.host === location.host && a.pathname === location.pathname) {
+  //   a.classList.add('current');
+  // }
+  nav.append(a);
   let a = document.createElement('a');
   a.href = url;
   a.textContent = title;
-  if (a.host === location.host && a.pathname === location.pathname) {
-    a.classList.add('current');
-  }
   nav.append(a);
+
+  a.classList.toggle(
+    'current',
+    a.host === location.host && 
+    a.pathname === location.pathname
+  );
+
+  if (a.host !== location.host) {
+    a.target = "_blank";
+  }
+}
+
+for (let p of pages) {
+  let url = p.url;
+  let title = p.title;
+
+  if (!url.startsWith('http')) {
+    if (ARE_WE_HOME) {
+      url = basePath + url;
+    } else {
+      url = basePath + url;
+    }
+  }
+
+  
 }
 
 document.body.insertAdjacentHTML(
