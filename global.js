@@ -45,8 +45,8 @@ for (let p of pages) {
   // if (a.host === location.host && a.pathname === location.pathname) {
   //   a.classList.add('current');
   // }
-  nav.append(a);
   let a = document.createElement('a');
+  nav.append(a);
   a.href = url;
   a.textContent = title;
   nav.append(a);
