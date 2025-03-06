@@ -2,6 +2,11 @@ let data = [];
 let commits = [];
 let commitProgress = 100;
 
+let filteredCommits = [];
+let filteredLines = [];
+let commitMaxTime = 0;
+let files = [];
+let lines = [];
 
 function processCommits() {
   commits = d3
@@ -79,19 +84,20 @@ function displayStats() {
   processCommits();
 
   // Create the dl element
+  d3.select('#stats').html('')
   const dl = d3.select('#stats').append('dl').attr('class', 'stats');
 
   // Add total LOC
   dl.append('dt').html('Total <abbr title="Lines of code">LOC</abbr>');
-  dl.append('dd').text(data.length);
+  dl.append('dd').text(filteredLines.length);
 
   // Add total commits
   dl.append('dt').text('Total commits');
-  dl.append('dd').text(commits.length);
+  dl.append('dd').text(filteredCommits.length);
 
   // Add more stats as needed...
   dl.append('dt').text('Longest file');
-  let file_lengths = data.map(entry => entry.line);
+  let file_lengths = filteredLines.map(entry => entry.line);
   let max = 0;
   for (let l of file_lengths) {
     if (l > max) {
@@ -101,12 +107,12 @@ function displayStats() {
   dl.append('dd').text(max + ' lines');
 
   dl.append('dt').text('Number of code files');
-  let files = data.map(entry => entry.file);
-  let unique_files = new Set(files);
+  let codeFiles = filteredLines.map(entry => entry.file);
+  let unique_files = new Set(codeFiles);
   dl.append('dd').text(unique_files.size);
 
   dl.append('dt').text('Most common day for commits: ');
-  let days = commits.map(entry => entry.date.toString().slice(0, 3));
+  let days = filteredCommits.map(entry => entry.date.toString().slice(0, 3));
   dl.append('dd').text(calcMaxDay(days));
 }
 
@@ -121,39 +127,25 @@ async function loadData() {
   }));
   
   commits = d3.groups(data, (d) => d.commit);
-
   
 }
-
 
 const w = 1000;
 const h = 600;
 let yScale = d3.scaleLinear().domain([0, 24]).range([h, 0]);;
 let xScale = d3
   .scaleTime()
-  .domain(d3.extent(commits, (d) => d.datetime))
+  .domain(d3.extent(filteredCommits, (d) => d.datetime))
   .range([0, w])
   .nice();
 
 let brushSelection = null;
 let selectedCommits =[];
 function isCommitSelected(commit) {
- /*
-  const min = { x: brushSelection[0][0], y: brushSelection[0][1] }; 
-  const max = { x: brushSelection[1][0], y: brushSelection[1][1] }; 
-
-  const x = xScale(commit.date); 
-  const y = yScale(commit.hourFrac); 
-  return x >= min.x && x <= max.x && y >= min.y && y <= max.y; */
   return selectedCommits.includes(commit);
 }
 
 function updateSelectionCount() {
-  /*
-  selectedCommits = brushSelection
-    ? commits.filter(isCommitSelected)
-    : [];  */
-
   const countElement = document.getElementById('selection-count');
   countElement.textContent = `${
     selectedCommits.length || 'No'
@@ -163,10 +155,6 @@ function updateSelectionCount() {
 }
 
 function updateLanguageBreakdown() {
-  /*
-  selectedCommits = brushSelection
-    ? commits.filter(isCommitSelected)
-    : []; */
   const container = document.getElementById('language-breakdown');
 
   if (selectedCommits.length === 0) {
@@ -174,7 +162,7 @@ function updateLanguageBreakdown() {
     return;
   }
   const requiredCommits = selectedCommits.length ? selectedCommits : commits;
-  const lines = requiredCommits.flatMap((d) => d.lines);
+  lines = requiredCommits.flatMap((d) => d.lines);
 
   // Use d3.rollup to count lines per language
   const breakdown = d3.rollup(
@@ -182,6 +170,7 @@ function updateLanguageBreakdown() {
     (v) => v.length,
     (d) => d.type
   );
+
 
   // Update DOM with breakdown
   container.innerHTML = '';
@@ -207,7 +196,7 @@ function brushed(evt) {
   brushSelection = evt.selection;
   selectedCommits = !brushSelection
     ? []
-    : commits.filter((commit) => {
+    : filteredCommits.filter((commit) => {
         let min = { x: brushSelection[0][0], y: brushSelection[0][1] };
         let max = { x: brushSelection[1][0], y: brushSelection[1][1] };
         let x = xScale(commit.date);
@@ -254,20 +243,23 @@ function brushSelector() {
   d3.select(svg).selectAll('.dots, .overlay ~ *').raise();
 }
 
-function createScatterplot() {
+function updateScatterplot(commits) {
   const width = 1000;
   const height = 600;
+  d3.select('svg').remove();
+  let svg = d3.select('#chart').append('svg');
 
   const sortedCommits = d3.sort(commits, (d) => -d.totalLines);
   xScale = d3
-  .scaleTime()
-  .domain(d3.extent(commits, (d) => d.datetime))
-  .range([0, width])
-  .nice();
+    .scaleTime()
+    .domain(d3.extent(commits, (d) => d.datetime))
+    .range([0, width])
+    .nice();
 
-  yScale = d3.scaleLinear().domain([0, 24]).range([height, 0]);;
+  yScale = d3.scaleLinear().domain([0, 24]).range([height, 0]);
 
-  const svg = d3
+  d3.select('#chart').html('');
+  svg = d3
     .select('#chart')
     .append('svg')
     .attr('viewBox', `0 0 ${width} ${height}`)
@@ -306,9 +298,11 @@ function createScatterplot() {
 
   const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
   const rScale = d3
-  .scaleSqrt() // Change only this line
-  .domain([minLines, maxLines])
-  .range([7, 20]);
+    .scaleSqrt() // Change only this line
+    .domain([minLines, maxLines])
+    .range([7, 20]);
+
+  svg.selectAll('g').remove()
   const dots = svg.append('g').attr('class', 'dots');
 
   dots
@@ -335,7 +329,6 @@ function createScatterplot() {
       d3.select(event.currentTarget).classed('selected', false);
       updateTooltipVisibility(false);
     });
-  console.log('created dots');
   // Add X axis
   svg
     .append('g')
@@ -351,29 +344,69 @@ function createScatterplot() {
   brushSelector();
 }
 
+function unitVisualization() {
+  files = d3
+    .groups(filteredLines, (d) => d.file)
+    .map(([name, lines]) => {
+      return { name, lines };
+    });
+
+  files = d3.sort(files, (d) => -d.lines.length);
+  d3.select('.files').selectAll('div').remove(); // clear everything first
+  let filesContainer = d3.select('.files').selectAll('div').data(files).enter().append('div');
+
+  filesContainer.append('dt').append('code').text(d => d.name);
+  filesContainer.append('dd').text(d => `${d.lines.length} lines`);
+  
+  let allTypes = new Set();
+
+  // Use map() to extract 'type' from the bound data and add it to the Set
+  filesContainer.each(function(d) {
+    allTypes.add(d.lines[0].type);
+  });
+  console.log(allTypes);
+
+  let fileTypeColors = d3.scaleOrdinal().domain([...allTypes]).range(d3.schemeTableau10);
+
+  filesContainer.selectAll('dd').each(function(d) { // Use each() to work with the bound data
+    d3.select(this) // Select the current dd element
+        .selectAll('div')
+        .data(d3.range(d.lines.length)) // Generate an array of length d.lines.length
+        .enter()
+        .append('div')
+        .attr("class", "line")
+        .style("background", fileTypeColors(d.lines[0].type))
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await loadData();
 
   displayStats();
   console.log('data loaded');
-  createScatterplot();
-
+  
   let timeScale = d3.scaleTime([d3.min(commits, d => d.datetime), d3.max(commits, d => d.datetime)], [0, 100]);
   const timeSlider = d3.select('#timeBar');
   const selectedTime = d3.select('#selectedTime');
 
   function updateTime() {
     let commitProgress = Number(timeSlider.property("value")) || 0;
-    let commitMaxTime = timeScale.invert(commitProgress);
+    commitMaxTime = timeScale.invert(commitProgress);
     selectedTime.text(commitMaxTime.toLocaleString(undefined, { 
       dateStyle: "long", 
       timeStyle: "short" 
     }));
+
+    filteredCommits = commits.filter(d => d.datetime < commitMaxTime);
+    filteredLines = data.filter(d => d.datetime < commitMaxTime);
+    displayStats();
+    unitVisualization();
+    updateScatterplot(filteredCommits);
   }
-  
+
   // Attach event listener for slider movement
   timeSlider.on("input", updateTime);
-  
+
   // Initialize with default value
   updateTime();
 });
