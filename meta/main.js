@@ -433,7 +433,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     let files = d3.groups(lines, (d) => d.file).map(([name, lines]) => {
       return { name, lines };
     });
+
+    // d.lines.length
     files = d3.sort(files, (d) => -d.lines.length);
+    console.log(files);
     d3.select('.files').selectAll('div').remove();
     let filesContainer = d3.select('.files').selectAll('div').data(files).enter().append('div');
     filesContainer.append('dt').html(d => `<code>${d.name}</code><small>${d.lines.length} lines</small>`);
@@ -489,7 +492,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     let startIndex = Math.floor(scrollTop / ITEM_HEIGHT);
     startIndex = Math.max(0, Math.min(startIndex, commits.length - VISIBLE_COUNT));
     renderItemsFiles(startIndex);
-  })
+  });
+
   displayStats();
   renderItemsChart(0);
   renderItemsFiles(0);
