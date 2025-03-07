@@ -123,6 +123,13 @@ export async function fetchJSON(url) {
       return data; 
 
   } catch (error) {
+      if (url.startsWith('../')) {
+        const new_url = url.substring(3)
+        const response = await fetch(new_url);
+        const data = await response.json();
+        console.log('Fetched data:', data); 
+        return data;
+      }
       console.error('Error fetching or parsing JSON data:', error);
   }
 };
