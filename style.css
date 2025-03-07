@@ -231,24 +231,35 @@ circle.selected {
   margin-left: auto;
 }
 
-.files > dl, dd {
+.files {
+  padding-left: 50px;
+  width: 1000px;
+}
+
+.files dl, dd {
   display: grid;
   grid-template-columns: subgrid;
 }
 
-.files > dl {
-  grid-column: 2;
+.files dt {
+  text-align: left;
+  margin: 0;
+
+  small {
+    display: block;
+    font-size: 0.75em;
+    opacity: 0.7;
+    margin-top: 0.2em;
+  }
 }
 
-.files > dd {
-  grid-column: 2;
+.files dd {
   display: flex;
   flex-wrap: wrap;
-  align-items: start;
-  align-content: start;
+  align-items: center;
   gap: 0.15em;
-  padding-top: 0.6em;
-  margin-left: 0;
+  margin: 0;
+  padding-bottom: 15px;
 }
 
 .line {
@@ -258,14 +269,14 @@ circle.selected {
   border-radius: 50%;
 }
 
-#scrollytelling {
+#scrollytelling-1 {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: subgrid;
 }
 
 /* feel free to play with this to make your scrolly more seemless with your plot */
-#scroll-container {
+#scroll-container-1 {
   grid-column: 1;
   position: relative;
   width: 95%;
@@ -275,11 +286,11 @@ circle.selected {
   margin-bottom: 50px;
 }
 
-#chart {
+#chart-1 {
   grid-column: 2;
 }
 
-#spacer {
+#spacer-1 {
   position: absolute;
   top: 0;
   left: 0;
@@ -288,7 +299,7 @@ circle.selected {
   pointer-events: none;
 }
 
-#items-container {
+#items-container-1 {
   position: absolute;
   top: 0;
   left: 0;
@@ -302,3 +313,35 @@ circle.selected {
   border-bottom: 2px solid #eee;
 }
 
+#scrollytelling-2 {
+  grid-column: 1 / -1;
+  display: flex;
+  grid-template-columns: subgrid;
+}
+
+/* feel free to play with this to make your scrolly more seemless with your plot */
+#scroll-container-2 {
+  grid-column: 1;
+  position: relative;
+  width: 1000px;
+  height: 350px;
+  overflow-y: scroll;
+  border: 1px solid #ccc;
+  margin-bottom: 50px;
+}
+
+#spacer-2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: none; /* transparent */
+  pointer-events: none;
+}
+
+#items-container-2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}

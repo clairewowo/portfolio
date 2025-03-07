@@ -42,23 +42,28 @@
         <!-- Add: Time, author, lines edited -->
     </dl>
     
-
-    <h2>Commits by time of day</h2>
-    <div  class="time-slider">
-        <label>Show commits until: 
-            <input id="timeBar" type=range min="0" max="100"></input>
-            <time id="selectedTime"></time>
-        </label>
-    </div>
-    <dl class="files"></dl>
     
-    <div id="scrollytelling">
-        <div id="scroll-container">
+    <h2>Lines of code in Files Over Time</h2>
+    <div id="scrollytelling-2">
+        
+        <div id="scroll-container-2">
             <div id="spacer"></div>
-            <div id="items-container"></div>
+            <div id="items-container-2"></div>
         </div>
-        <div id="chart"></div>
+        <dl class="files"></dl>
     </div>
+
+    <div id="scrollytelling-1">
+        <h2>Number of Commits over Time</h2>
+        <div id="scroll-container-1">
+            <div id="spacer-1"></div>
+            <div id="items-container-1"></div>
+        </div>
+        <div id="chart-1"></div>
+    </div>
+
+    
+    
     
     <p id="selection-count">No commits selected</p>
     <dl id="language-breakdown" class="stats"></dl>

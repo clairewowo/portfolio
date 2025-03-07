@@ -41,6 +41,8 @@ function processCommits() {
 
       return ret;
     });
+
+    commits.sort((a, b) => a.datetime - b.datetime);
 }
 
 function calcMaxDay(days) {
@@ -84,21 +86,23 @@ function displayStats() {
   // Process commits first
   processCommits();
 
+  lines = commits.flatMap((d) => d.lines);
+  console.log(lines);
   // Create the dl element
   d3.select('#stats').html('')
   const dl = d3.select('#stats').append('dl').attr('class', 'stats');
 
-  // Add total LOC
+
   dl.append('dt').html('Total <abbr title="Lines of code">LOC</abbr>');
-  dl.append('dd').text(filteredLines.length);
+  dl.append('dd').text(lines.length);
 
   // Add total commits
   dl.append('dt').text('Total commits');
-  dl.append('dd').text(filteredCommits.length);
+  dl.append('dd').text(commits.length);
 
   // Add more stats as needed...
   dl.append('dt').text('Longest file');
-  let file_lengths = filteredLines.map(entry => entry.line);
+  let file_lengths = lines.map(entry => entry.line);
   let max = 0;
   for (let l of file_lengths) {
     if (l > max) {
@@ -108,12 +112,12 @@ function displayStats() {
   dl.append('dd').text(max + ' lines');
 
   dl.append('dt').text('Number of code files');
-  let codeFiles = filteredLines.map(entry => entry.file);
+  let codeFiles = lines.map(entry => entry.file);
   let unique_files = new Set(codeFiles);
   dl.append('dd').text(unique_files.size);
 
   dl.append('dt').text('Most common day for commits: ');
-  let days = filteredCommits.map(entry => entry.date.toString().slice(0, 3));
+  let days = commits.map(entry => entry.date.toString().slice(0, 3));
   dl.append('dd').text(calcMaxDay(days));
 }
 
@@ -247,7 +251,7 @@ function updateScatterplot(commits) {
   const width = 1000;
   const height = 600;
   d3.select('svg').remove();
-  let svg = d3.select('#chart').append('svg');
+  let svg = d3.select('#chart-1').append('svg');
 
   const sortedCommits = d3.sort(commits, (d) => -d.totalLines);
   xScale = d3
@@ -258,9 +262,9 @@ function updateScatterplot(commits) {
 
   yScale = d3.scaleLinear().domain([0, 24]).range([height, 0]);
 
-  d3.select('#chart').html('');
+  d3.select('#chart-1').html('');
   svg = d3
-    .select('#chart')
+    .select('#chart-1')
     .append('svg')
     .attr('viewBox', `0 0 ${width} ${height}`)
     .style('overflow', 'visible');
@@ -363,7 +367,6 @@ function unitVisualization() {
   filesContainer.each(function(d) {
     allTypes.add(d.lines[0].type);
   });
-  console.log(allTypes);
 
   let fileTypeColors = d3.scaleOrdinal().domain([...allTypes]).range(d3.schemeTableau10);
 
@@ -380,30 +383,83 @@ function unitVisualization() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadData();
-
-  displayStats();
   console.log('data loaded');
   
   let NUM_ITEMS = commits.length; // Ideally, let this value be the length of your commit history
   let ITEM_HEIGHT = 80; // Feel free to change
   let VISIBLE_COUNT = 8; // Feel free to change as well
   let totalHeight = (NUM_ITEMS - 1) * ITEM_HEIGHT;
-  const scrollContainer = d3.select('#scroll-container');
-  const spacer = d3.select('#spacer');
+  const scrollContainer1 = d3.select('#scroll-container-1');
+  const spacer = d3.select('#spacer-1');
   spacer.style('height', `${totalHeight}px`);
-  const itemsContainer = d3.select('#items-container');
+  const itemsContainer1 = d3.select('#items-container-1');
 
-  function renderItems(startIndex) {
+  function renderItemsChart(startIndex) {
     // Clear things off
-    itemsContainer.selectAll('div').remove();
+    itemsContainer1.selectAll('div').remove();
     const endIndex = Math.min(startIndex + VISIBLE_COUNT, commits.length);
     let newCommitSlice = commits.slice(startIndex, endIndex);
+    filteredCommits = newCommitSlice;
     // TODO: how should we update the scatterplot (hint: it's just one function call)
     updateScatterplot(newCommitSlice);
 
     newCommitSlice.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
     // Re-bind the commit data to the container and represent each using a div
-    itemsContainer.selectAll('div')
+    itemsContainer1.selectAll('div')
+                  .data(commits)
+                  .enter()
+                  .append('div')
+                  .html((commit, index) => `On ${commit.datetime.toLocaleString("en", {dateStyle: "full", timeStyle:
+  "short"})}, I made
+        <a href="${commit.url}" target="_blank">
+            ${index > 0 ? 'yet another commit' : 'my first commit, and it was glorious'}
+        </a>. I edited ${commit.totalLines} lines across 
+        ${d3.rollups(commit.lines, D => D.length, d => d.file).length} files. 
+        Then I looked over all I had made, and everything was functional.
+    `)
+                  .style('position', 'absolute')
+                  .style('top', (_, idx) => `${idx * ITEM_HEIGHT}px`)
+  }
+
+  const scrollContainer2 = d3.select('#scroll-container-2');
+  
+  const spacer2 = d3.select('#spacer-2');
+  spacer2.style('height', `${totalHeight}px`);
+  const itemsContainer2 = d3.select('#items-container-2');
+
+  function displayCommitFiles(filteredCommits) {
+    const lines = filteredCommits.flatMap((d) => d.lines);
+    let fileTypeColors = d3.scaleOrdinal(d3.schemeTableau10);
+    let files = d3.groups(lines, (d) => d.file).map(([name, lines]) => {
+      return { name, lines };
+    });
+    files = d3.sort(files, (d) => -d.lines.length);
+    d3.select('.files').selectAll('div').remove();
+    let filesContainer = d3.select('.files').selectAll('div').data(files).enter().append('div');
+    filesContainer.append('dt').html(d => `<code>${d.name}</code><small>${d.lines.length} lines</small>`);
+    filesContainer.append('dd')
+                  .selectAll('div')
+                  .data(d => d.lines)
+                  .enter()
+                  .append('div')
+                  .attr('class', 'line')
+                  .style('background', d => fileTypeColors(d.type));
+    
+    
+    unitVisualization();
+  }
+
+  function renderItemsFiles(startIndex) {
+    // Clear things off
+    itemsContainer2.selectAll('div').remove();
+    const endIndex = Math.min(startIndex + VISIBLE_COUNT, commits.length);
+    let newCommitSlice = commits.slice(startIndex, endIndex);
+    let filteredCommits2 = newCommitSlice;
+    filteredLines = filteredCommits2.flatMap((d) => d.lines);
+
+    newCommitSlice.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+    // Re-bind the commit data to the container and represent each using a div
+    itemsContainer2.selectAll('div')
                   .data(commits)
                   .enter()
                   .append('div')
@@ -417,37 +473,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     `)
                   .style('position', 'absolute')
                   .style('top', (_, idx) => `${idx * ITEM_HEIGHT}px`)
+    displayCommitFiles(filteredCommits2);
   }
-  scrollContainer.on('scroll', () => {
-    const scrollTop = scrollContainer.property('scrollTop');
+
+  
+  scrollContainer1.on('scroll', () => {
+    const scrollTop = scrollContainer1.property('scrollTop');
     let startIndex = Math.floor(scrollTop / ITEM_HEIGHT);
     startIndex = Math.max(0, Math.min(startIndex, commits.length - VISIBLE_COUNT));
-    renderItems(startIndex);
-  }); 
+    renderItemsChart(startIndex);
+  });
 
-  let timeScale = d3.scaleTime([d3.min(commits, d => d.datetime), d3.max(commits, d => d.datetime)], [0, 100]);
-  const timeSlider = d3.select('#timeBar');
-  const selectedTime = d3.select('#selectedTime');
-
-
-  function updateTime() {
-    let commitProgress = Number(timeSlider.property("value")) || 0;
-    commitMaxTime = timeScale.invert(commitProgress);
-    selectedTime.text(commitMaxTime.toLocaleString(undefined, { 
-      dateStyle: "long", 
-      timeStyle: "short" 
-    }));
-
-    filteredCommits = commits.filter(d => d.datetime < commitMaxTime);
-    filteredLines = data.filter(d => d.datetime < commitMaxTime);
-    displayStats();
-    unitVisualization();
-    updateScatterplot(filteredCommits);
-  }
-
-  // Attach event listener for slider movement
-  timeSlider.on("input", updateTime);
-
-  // Initialize with default value
-  updateTime();
+  scrollContainer2.on('scroll', () => {
+    const scrollTop = scrollContainer2.property('scrollTop');
+    let startIndex = Math.floor(scrollTop / ITEM_HEIGHT);
+    startIndex = Math.max(0, Math.min(startIndex, commits.length - VISIBLE_COUNT));
+    renderItemsFiles(startIndex);
+  })
+  displayStats();
+  renderItemsChart(0);
+  renderItemsFiles(0);
 });
